@@ -1,7 +1,9 @@
 import argparse
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -30,4 +32,3 @@ if __name__ == "__main__":
     sns.barplot(x="File size (MiB)", y="Module", data=df_simple, order=filesize_order, color=sns.color_palette()[2], ax=axs[2])
     plt.tight_layout()
     plt.savefig(args.out_fig, dpi=300)
-
