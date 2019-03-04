@@ -39,7 +39,7 @@ with open("large_data.pkl", "wb") as f:
 
 ---
 
-# 巨大なPickleファイルを読み込むと...
+# 巨大なPickleファイルの読み込むとき、
 
 ``` python
 import pickle
@@ -49,7 +49,7 @@ with open("large_data.pkl", "rb") as f:
 
 ---
 
-# 遅すぎる！！
+# 速度がちょっと...
 
 ``` python
 178.57 sec
@@ -57,11 +57,11 @@ with open("large_data.pkl", "rb") as f:
 
 ---
 
-# 他にも、
+# さらには、
 
 ---
 
-# 散々待たされて、メモリエラー
+# 散々待たされて、メモリエラー...
 
 ``` python
 *** set a breakpoint in malloc_error_break to debug
@@ -75,8 +75,6 @@ Traceback (most recent call last):
     self.stack.append({})
 MemoryError
 ```
----
-
 
 ---
 
@@ -184,24 +182,20 @@ MemoryError
 ---
 
 # ５つ目：generator
-- リスト全体を保持しない
+- リスト全体を保持しないため、メモリ消費が少ない
+	- 次の要素だけ参照できる
 - やり方
 
   ``` python
-  def data_list():
-      retunr [i for i in range(500000)]
-  
-  pickle.dump(data_list())
+  data_list = [i for i in range(500000)] # ふつうのリスト
+  pickle.dump(data_list, f)
   ```
 
   ↓
 
   ``` python
-  def data_generator():
-      for i in range(500000):
-          yield i
-          
-  for x in data_generator():
+  data_generator = (i for i in range(500000)) # Generator
+  for x in data_generator:
       pickle.dump(x, f)
   ```
 ---
@@ -210,7 +204,12 @@ MemoryError
 
 ---
 
-# 比較するもの
+# 比較するPickle一覧
+![](pickle_list.png)
+
+---
+
+# 比較項目
 - 時間
 	- `dump`にかかる時間
 	- `load`にかかる時間
@@ -221,41 +220,42 @@ MemoryError
 
 ---
 
-# 使うデータ（リスト版）
+# `dump`/`load`するデータ（リスト版）
 
-大体１GBのデータ
+大体１GBのデータ、100列 x 500000行くらい
 
 ``` python
 [
     {
      'id': 1,
-     'data': ['data11', 'data12', ..., 'data1100']
+     'data': ['data1.1', 'data1.2', ..., 'data1.100']
     },
     ...
     {
      'id': 500000,
-     'data': ['data5000001', ..., 'data500000100']
+     'data': ['data500000.1', ..., 'data500000.100']
     }
 ]
 ```
 
 ---
 
-# 使うデータ（Generator版）
+# `dump`/`load`するデータ（Generator版）
 
-大体１GBのデータ
+大体１GBのデータ、100列 x 500000行くらい
 
 ``` python
 {
  'id': 1,
- 'data': ['data11', 'data12', ..., 'data1100']
+ 'data': ['data1.1', 'data1.2', ..., 'data1.100']
 },
 ...
 {
  'id': 500000,
- 'data': ['data5000001', ..., 'data500000100']
+ 'data': ['data500000.1', ..., 'data500000.100']
 }
 ```
+
 ---
 
 # 環境
@@ -273,67 +273,60 @@ MemoryError
 
 ---
 
-# 時間（合計の小さい順）
-![](time_sum.png)
+# 時間
+![](time_highlight.png)
 
 ---
 
-# 最大メモリ使用量（合計の小さい順）
-![](memory_sum.png)
+# 最大メモリ使用量
+![](memory_highlight.png)
 
 ---
 
-# ファイルサイズ（小さい順）
-![](size.png)
+# ファイルサイズ
+![](size_highlight.png)
 
 ---
 
 # 総合優勝
 
-cPickle4_fast
+pickle4_gen_fast
 ![](winner.png)
 
 ---
 
-# `load`最速賞（`dump`時間は無視）
-
-pickle4_opt
-![](load_only.png)
-
----
-
 # まとめ
-- `load`と`dump`かなり早い、メモリふつう、ファイルほぼ最小
-ただし廃止予定
 
-  ``` python
-  import _pickle as cPickle
-
-  p = cPickle.Pickler(f, protocol=4)
-  p.fast = True
-  p.dump(data)
-  ```
-
-- `dump`激遅、`load`時に最速・メモリ最小、ファイル最小
+本気を出したPickleの書き方
 
   ``` python
   import pickle
-  import pickletools
 
   p = pickle.Pickler(f, protocol=4)
-  pickled = p.dumps(data)
-  opt = pickletools.optimize(pickled)
-  pickle.dump(opt, f)
+  p.fast = True
+  for x in data_generator:
+      p.dump(x)
   ```
 
+- `load`と`dump`かなり早い
+- メモリふつう
+- ファイルサイズ最小
+- ###### ただし廃止予定
+
 ---
 
-# 次回
+# おまけ
+
+![](all_highlight.png)
 
 ---
 
-# 巨大なテキストデータを保存・復元する
-## 〜最強のSerializationモジュール編〜
+# 次回予告（未定）
+
+---
+
+# 巨大なデータを保存・復元する
+## 〜 あなたの知らないSerializationの世界 〜
 
 ```
 pickle
@@ -348,4 +341,3 @@ cloudpickle
 hickle
 ...
 ```
-
