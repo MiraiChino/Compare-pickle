@@ -98,11 +98,12 @@ MemoryError
 
 ---
 
-# Pickleを早くする方法４つ
+# Pickleを早くする方法５つ
 - `cPickle`モジュールを使う
 - `protocol=4`を使う
 - `fast=True`を使う
 - `pickletools.optimize()`を使う
+- generatorを使う
 
 ---
 
@@ -182,6 +183,29 @@ MemoryError
 
 ---
 
+# ５つ目：generator
+- リスト全体を保持しない
+- やり方
+
+  ``` python
+  def data_list():
+      retunr [i for i in range(500000)]
+  
+  pickle.dump(data_list())
+  ```
+
+  ↓
+
+  ``` python
+  def data_generator():
+      for i in range(500000):
+          yield i
+          
+  for x in data_generator():
+      pickle.dump(x, f)
+  ```
+---
+
 # 比較してみた
 
 ---
@@ -197,7 +221,7 @@ MemoryError
 
 ---
 
-# 使うデータ
+# 使うデータ（リスト版）
 
 大体１GBのデータ
 
@@ -217,13 +241,30 @@ MemoryError
 
 ---
 
+# 使うデータ（Generator版）
+
+大体１GBのデータ
+
+``` python
+{
+ 'id': 1,
+ 'data': ['data11', 'data12', ..., 'data1100']
+},
+...
+{
+ 'id': 500000,
+ 'data': ['data5000001', ..., 'data500000100']
+}
+```
+---
+
 # 環境
 
-- Python 3.7.1
-- MacBook Air (Mid 2013)
+- Python 3.7.2
+- MacBook Pro (2017)
   ```
-  Processor: Intel Core i5 1.3 GHz
-  Memory: 8 GB
+  プロセッサ: 2.3 GHz Intel Core i5
+  メモリ: 16 GB 2133 MHz LPDDR3
   ```
 
 ---
