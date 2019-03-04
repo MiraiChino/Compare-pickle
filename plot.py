@@ -35,9 +35,9 @@ if __name__ == "__main__":
     gen_opt = df[df.Module.str.match(".*_gen_opt$")]
     df_aligned = pd.concat([standard, fast, opt, gen, gen_fast, gen_opt])
 
-    save_barplot("memory_aligned.png", x="Time (sec)", y="Module", data=df_aligned, hue="Method")
-    save_barplot("size_aligned.png", x="File size (MiB)", y="Module", data=df_aligned, color=sns.color_palette()[2])
     save_barplot("time_aligned.png", x="Time (sec)", y="Module", data=df_aligned, hue="Method")
+    save_barplot("memory_aligned.png", x="Peak memory (MiB)", y="Module", data=df_aligned, hue="Method")
+    save_barplot("size_aligned.png", x="File size (MiB)", y="Module", data=df_aligned, color=sns.color_palette()[2])
 
     fig, axs = plt.subplots(figsize=(15, 5), ncols=3)
     sns.barplot(x="Time (sec)", y="Module", data=df_aligned, hue="Method", ax=axs[0])
