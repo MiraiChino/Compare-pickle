@@ -76,13 +76,14 @@ if __name__ == "__main__":
     pickle0 = Pickle(pickle, 0, "pickle0")
     pickle3 = Pickle(pickle, 3, "pickle3")
     pickle4 = Pickle(pickle, 4, "pickle4")
+    cPickle0 = Pickle(cPickle, 0, "cPickle0")
     cPickle3 = Pickle(cPickle, 3, "cPickle3")
     cPickle4 = Pickle(cPickle, 4, "cPickle4")
 
     list_data = list_data(500000, 100)
     gen_data = gen_data(500000, 100)
 
-    for module in [pickle0, pickle3, pickle4, cPickle3, cPickle4]:
+    for module in [pickle0, pickle3, pickle4, cPickle0, cPickle3, cPickle4]:
         for dump in [module.dump, module.dump_fast, module.dump_opt]:
             filename = f"{dump.__self__.name}_{dump.__name__}.pkl".replace("_dump", "")
             
