@@ -291,7 +291,7 @@ MemoryError
 # 総合優勝
 
 pickle4_gen_fast
-![](winner.png)
+![](winner_highlight.png)
 
 ---
 
